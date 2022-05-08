@@ -38,37 +38,37 @@ export function useFieldMethods() {
   const watchRefs = useRef<Record<string, any>>({});
 
   const handlers = useMemo(() => {
-    const { watchSubjectRef, watchInternal } = ref.current.control;
+    const {_subjects} = ref.current.control
 
     const result = {
       watch<F extends FieldType<any, any>>(field: F): FieldValueType<F> {
-        const name = getFieldName(field);
+        const name = getFieldName(field)
 
-        const value = watchInternal(name, result.getValue(field));
+        const value = result.getValue(field)
 
         if (!(name in watchRefs.current)) {
-          watchRefs.current[name] = watchSubjectRef.current.subscribe({
-            next({ name: fieldName }) {
-              if (fieldName !== name) return;
+          watchRefs.current[name] = _subjects.state.subscribe({
+            next({name: fieldName}) {
+              if (fieldName !== name) return
 
-              forceRender();
+              forceRender()
             },
-          });
+          })
         }
 
-        return value;
+        return value
       },
 
       setValue: <F extends FieldType<any, any>>(
         field: F,
         value: FieldValueType<F>,
       ): void => {
-        result.clearError(field);
+        result.clearError(field)
 
         ref.current.setValue(getFieldName(field), value, {
           shouldDirty: true,
           shouldValidate: true,
-        });
+        })
       },
       getValue: <F extends FieldType<any, any>>(field: F): FieldValueType<F> =>
         ref.current.getValues(getFieldName(field)),
@@ -86,15 +86,15 @@ export function useFieldMethods() {
          * Workaround to schedule live error setting
          */
         setTimeout(() => {
-          ref.current.setError(getFieldName(field), error);
-        }, 0);
+          ref.current.setError(getFieldName(field), error)
+        }, 0)
       },
       getError: <F extends FieldType<any, any>>(field: F): ErrorOption =>
         get(ref.current.formState.errors, getFieldName(field)),
       clearError: <F extends FieldType<any, any>>(field: F) => {
-        ref.current.clearErrors(getFieldName(field));
+        ref.current.clearErrors(getFieldName(field))
       },
-    };
+    }
 
     return result;
   }, [getFieldName]);
