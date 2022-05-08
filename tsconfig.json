@@ -4,5 +4,12 @@
     "baseUrl": ".",
     "rootDir": "."
   },
-  "include": ["@formalist/**/*.ts", "@formalist/**/*.json"]
+  "include": [
+    "@formalist/**/*.ts",
+    "@formalist/**/*.json",
+    "packages/**/*.ts",
+    "packages/**/*.json",
+    "examples/**/*.ts",
+    "examples/**/*.json"
+  ]
 }

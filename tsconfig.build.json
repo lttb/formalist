@@ -17,8 +17,6 @@
         "strictFunctionTypes": true
     },
     "exclude": [
-        "node_modules",
-        "@convey/*/node_modules/**/*",
-        "@convey/*/lib/**/*"
+        "**/node_modules/**"
     ]
 }
