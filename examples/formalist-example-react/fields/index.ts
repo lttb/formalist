@@ -63,10 +63,10 @@ const Phone = coerce(
   },
 )
 
-export const firstNameField = createField(string(), 'firstName')
-export const middleNameField = createField(string(), 'middleName')
-export const lastNameField = createField(string(), 'lastName')
+export const firstNameField = createField(string())
+export const middleNameField = createField(string())
+export const lastNameField = createField(string())
 
-export const emailField = createField(Email, 'email')
+export const emailField = createField(Email)
 
-export const phoneField = createField(Phone, 'phone')
+export const phoneField = createField(Phone)

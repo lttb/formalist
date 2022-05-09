@@ -57,6 +57,7 @@ export const createForm = <
   fields: F,
 ) => {
   const fieldsMap = {} as React.ContextType<typeof FieldContext>
+  const fieldNames = {} as React.ContextType<typeof FieldContext>
 
   function traverse(node: FieldsObject<any>, path: string[] = []) {
     const fieldsSchema = {} as any
@@ -67,11 +68,16 @@ export const createForm = <
       if (isField(value)) {
         fieldsSchema[key] = value.struct
 
+        const name = buildName(currentPath)
+
         fieldsMap[value.id] = {
-          name: buildName(currentPath),
+          name,
+          id: value.id,
           path: currentPath,
           struct: value.struct,
         }
+
+        fieldNames[name] = fieldsMap[value.id]
       } else {
         fieldsSchema[key] = traverse(value, currentPath)
       }
@@ -95,9 +101,22 @@ export const createForm = <
 
       return fieldContext[field.id].name
     },
+
+    register: (field) => {
+      const id = field.id
+
+      if (!(id in fieldContext)) {
+        throw new Error('Undeclared field')
+      }
+
+      return {name: fieldContext[id].name}
+    },
   } as React.ContextType<typeof FieldContext>
 
   const set = (obj: any, path: string[], value: any) => {
+    // TODO: are empty strings satisfy "required"?
+    if (value === '') return obj
+
     let currObj = obj
     path.forEach((key, index) => {
       if (index === path.length - 1) {
@@ -113,7 +132,7 @@ export const createForm = <
   const restore = (keys: string[], obj: any, cb: any) => {
     const result = Object.create(null)
     keys.forEach((key) => {
-      const val = fieldsMap[key]
+      const val = fieldNames[key]
 
       set(result, val.path, cb(obj[key]))
     })
@@ -123,7 +142,7 @@ export const createForm = <
   const handleSubmit = (onSubmit, onSubmitError) => (event) => {
     event?.preventDefault()
 
-    const keys = Object.keys(fieldsMap)
+    const keys = Object.keys(fieldNames)
 
     try {
       // there could be issues with nested coercions
@@ -150,12 +169,17 @@ export const createForm = <
   }) => {
     return (
       <FieldContext.Provider value={fieldContext}>
+        {/* TODO: think about Native form */}
         <form onSubmit={handleSubmit(onSubmit, onSubmitError)}>{children}</form>
       </FieldContext.Provider>
     )
   }
 
-  return {Form, handleSubmit}
+  return {
+    Form,
+    register: fieldContext.register,
+    getFieldName: fieldContext.getFieldName,
+  }
 }
 
 export const createFormEffect =

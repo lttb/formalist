@@ -17,21 +17,28 @@ import {
 import type {Infer, Field, FieldValueType, FieldType, Struct} from './types'
 
 export const globalFieldContext = {
-  getFieldName: (field) => {
-    if (!(field.id in globalFieldContext)) {
-      // eslint-disable-next-line no-console
-      console.trace('[Form] missed field', field)
-
-      throw new Error(`[Form] field should be declared`)
-    }
-
-    return globalFieldContext[field.id].name
-  },
+  // getFieldName: (field) => {
+  //   if (!(field.id in globalFieldContext)) {
+  //     // eslint-disable-next-line no-console
+  //     console.trace('[Form] missed field', field)
+  //     throw new Error(`[Form] field should be declared`)
+  //   }
+  //   return globalFieldContext[field.id].name
+  // },
 }
 
 export const FieldContext = createContext<
-  Record<string, {name: string; path: string[]; struct: Struct<any, any>}> & {
+  Record<
+    string,
+    {
+      id: string
+      name: string
+      path: string[]
+      struct: Struct<any, any>
+    }
+  > & {
     getFieldName: <F extends FieldType<any, any>>(field: F) => any
+    register: <F extends FieldType<any, any>>(field: F) => {name: string}
   }
 >(globalFieldContext as any)
 

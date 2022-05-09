@@ -9,7 +9,7 @@ import {
   phoneField,
 } from '../fields'
 
-const {Form} = createForm({
+const {Form, register} = createForm({
   fistName: firstNameField,
   lastName: lastNameField,
 
@@ -19,10 +19,6 @@ const {Form} = createForm({
     email: emailField,
     phone: phoneField,
   },
-
-  // middleName: refineField(middleNameField, optional),
-  // email: emailField,
-  // phone: phoneField,
 })
 
 const Home: NextPage = () => {
@@ -36,11 +32,11 @@ const Home: NextPage = () => {
           console.error(error)
         }}
       >
-        <input name={firstNameField.id} placeholder="First name" />
-        <input name={lastNameField.id} placeholder="Last name" />
+        <input {...register(firstNameField)} placeholder="First name" />
+        <input {...register(lastNameField)} placeholder="Last name" />
 
-        <input name={emailField.id} placeholder="Email" />
-        <input name={phoneField.id} placeholder="Phone" />
+        <input {...register(emailField)} placeholder="Email" />
+        <input {...register(phoneField)} placeholder="Phone" />
 
         <button type="submit">Submit</button>
       </Form>
