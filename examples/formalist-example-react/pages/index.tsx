@@ -1,6 +1,5 @@
-import {createForm, refineField} from 'formalist/index2'
+import {createForm, optional, refineField} from 'formalist/index2'
 import type {NextPage} from 'next'
-import {optional} from 'superstruct'
 import {
   emailField,
   firstNameField,
@@ -13,7 +12,7 @@ const {Form, register} = createForm({
   fistName: firstNameField,
   lastName: lastNameField,
 
-  middleName: refineField(middleNameField, optional),
+  middleName: optional(middleNameField),
 
   contacts: {
     email: emailField,
@@ -32,13 +31,17 @@ const Home: NextPage = () => {
           console.error(error)
         }}
       >
-        <input {...register(firstNameField)} placeholder="First name" />
-        <input {...register(lastNameField)} placeholder="Last name" />
+        <div style={{display: 'inline-flex', flexDirection: 'column', gap: 20}}>
+          <input {...register(firstNameField)} placeholder="First name" />
+          <input {...register(lastNameField)} placeholder="Last name" />
 
-        <input {...register(emailField)} placeholder="Email" />
-        <input {...register(phoneField)} placeholder="Phone" />
+          <input {...register(middleNameField)} placeholder="Middle name" />
 
-        <button type="submit">Submit</button>
+          <input {...register(emailField)} placeholder="Email" />
+          <input {...register(phoneField)} placeholder="Phone" />
+
+          <button type="submit">Submit</button>
+        </div>
       </Form>
     </div>
   )

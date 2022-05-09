@@ -5,7 +5,7 @@ import type {
   SubmitErrorHandler,
 } from 'react-hook-form/dist/types'
 import {nanoid} from 'nanoid'
-import {object, create} from 'superstruct'
+import {object, create, optional as optionalStruct} from 'superstruct'
 
 import type {
   Struct,
@@ -19,9 +19,10 @@ import type {
   FieldValue,
   FormType,
   Effect,
+  FieldType,
 } from './types'
 import {FieldContext} from './hooks'
-import {required} from './refinements'
+import {refineField, required} from './refinements'
 
 const buildName = (name: any | any[]) =>
   Array.isArray(name) ? name.join('.') : name
@@ -49,6 +50,11 @@ export type IForm<T> = UseFormProps<T> & {
 type UseWatch<T extends FieldValues> = (() => T) &
   (<N extends FieldPath<T>>(name?: N) => FieldValue<T, N>)
 
+export const optional = <F extends Field<any, any>>(
+  field: F,
+): FieldType<F['struct']['TYPE'] | undefined, F['struct']['schema']> =>
+  Object.assign(refineField(field, optionalStruct), {__optional__: true})
+
 export const createForm = <
   F extends FieldsObject<any>,
   S extends InferSchemaFromFields<F>,
@@ -62,24 +68,25 @@ export const createForm = <
   function traverse(node: FieldsObject<any>, path: string[] = []) {
     const fieldsSchema = {} as any
 
-    for (const [key, value] of Object.entries(node)) {
+    for (const [key, field] of Object.entries(node)) {
       const currentPath = path.concat(key)
 
-      if (isField(value)) {
-        fieldsSchema[key] = value.struct
+      if (isField(field)) {
+        fieldsSchema[key] = field.struct
 
         const name = buildName(currentPath)
 
-        fieldsMap[value.id] = {
+        fieldsMap[field.id] = {
           name,
-          id: value.id,
+          id: field.id,
           path: currentPath,
-          struct: value.struct,
+          struct: field.struct,
+          field,
         }
 
-        fieldNames[name] = fieldsMap[value.id]
+        fieldNames[name] = fieldsMap[field.id]
       } else {
-        fieldsSchema[key] = traverse(value, currentPath)
+        fieldsSchema[key] = traverse(field, currentPath)
       }
     }
 
@@ -109,7 +116,10 @@ export const createForm = <
         throw new Error('Undeclared field')
       }
 
-      return {name: fieldContext[id].name}
+      return {
+        name: fieldContext[id].name,
+        required: !fieldContext[id].field.__optional__,
+      }
     },
   } as React.ContextType<typeof FieldContext>
 

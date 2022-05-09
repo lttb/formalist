@@ -35,10 +35,13 @@ export const FieldContext = createContext<
       name: string
       path: string[]
       struct: Struct<any, any>
+      field: FieldType<any, any>
     }
   > & {
     getFieldName: <F extends FieldType<any, any>>(field: F) => any
-    register: <F extends FieldType<any, any>>(field: F) => {name: string}
+    register: <F extends FieldType<any, any>>(
+      field: F,
+    ) => {name: string; required?: boolean}
   }
 >(globalFieldContext as any)
 
