@@ -41,7 +41,15 @@ export const FieldContext = createContext<
     getFieldName: <F extends FieldType<any, any>>(field: F) => any
     register: <F extends FieldType<any, any>>(
       field: F,
-    ) => {name: string; required?: boolean}
+    ) => {
+      name: string
+      required?: boolean
+      min?: number
+      max?: number
+      minLength?: number
+      maxLength?: number
+      pattern?: string
+    }
   }
 >(globalFieldContext as any)
 

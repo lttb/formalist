@@ -50,11 +50,6 @@ export type IForm<T> = UseFormProps<T> & {
 type UseWatch<T extends FieldValues> = (() => T) &
   (<N extends FieldPath<T>>(name?: N) => FieldValue<T, N>)
 
-export const optional = <F extends Field<any, any>>(
-  field: F,
-): FieldType<F['struct']['TYPE'] | undefined, F['struct']['schema']> =>
-  Object.assign(refineField(field, optionalStruct), {__optional__: true})
-
 export const createForm = <
   F extends FieldsObject<any>,
   S extends InferSchemaFromFields<F>,
@@ -116,9 +111,19 @@ export const createForm = <
         throw new Error('Undeclared field')
       }
 
+      const fieldValue = fieldContext[id].field
+
       return {
         name: fieldContext[id].name,
-        required: !fieldContext[id].field.__optional__,
+
+        required: !fieldValue.__optional__,
+        // support exclusive
+        min: fieldValue.__min__?.threshold,
+        // support exclusive
+        max: fieldValue.__max__?.threshold,
+        minLength: fieldValue.__size__?.min,
+        maxLength: fieldValue.__size__?.max,
+        pattern: fieldValue.__pattern__?.regexp.toString().slice(1, -1),
       }
     },
   } as React.ContextType<typeof FieldContext>
