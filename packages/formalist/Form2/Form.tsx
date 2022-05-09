@@ -117,13 +117,19 @@ export const createForm = <
         name: fieldContext[id].name,
 
         required: !fieldValue.__optional__,
-        // support exclusive
-        min: fieldValue.__min__?.threshold,
-        // support exclusive
-        max: fieldValue.__max__?.threshold,
-        minLength: fieldValue.__size__?.min,
-        maxLength: fieldValue.__size__?.max,
-        pattern: fieldValue.__pattern__?.regexp.toString().slice(1, -1),
+
+        ...(fieldValue.struct.type !== 'number'
+          ? {
+              minLength: fieldValue.__size__?.min,
+              maxLength: fieldValue.__size__?.max,
+              pattern: fieldValue.__pattern__?.regexp.toString().slice(1, -1),
+            }
+          : {
+              // support exclusive
+              min: fieldValue.__min__?.threshold,
+              // support exclusive
+              max: fieldValue.__max__?.threshold,
+            }),
       }
     },
   } as React.ContextType<typeof FieldContext>

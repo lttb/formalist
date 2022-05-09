@@ -70,3 +70,5 @@ export const lastNameField = createField(string())
 export const emailField = createField(Email)
 
 export const phoneField = createField(Phone)
+
+export const ageField = createField(coerce(number(), string(), Number))

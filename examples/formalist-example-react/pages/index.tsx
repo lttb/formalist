@@ -1,6 +1,15 @@
-import {createForm, optional, pattern, refineField} from 'formalist/index2'
+import {
+  createForm,
+  max,
+  min,
+  optional,
+  pattern,
+  refineField,
+  size,
+} from 'formalist/index2'
 import type {NextPage} from 'next'
 import {
+  ageField,
   emailField,
   firstNameField,
   lastNameField,
@@ -9,10 +18,12 @@ import {
 } from '../fields'
 
 const {Form, register} = createForm({
-  fistName: firstNameField,
+  fistName: size(firstNameField, 2, 5),
   lastName: pattern(lastNameField, /[a-z]+/),
 
   middleName: optional(middleNameField),
+
+  age: size(ageField, 5, 200),
 
   contacts: {
     email: emailField,
@@ -39,6 +50,8 @@ const Home: NextPage = () => {
 
           <input {...register(emailField)} type="email" placeholder="Email" />
           <input {...register(phoneField)} type="tel" placeholder="Phone" />
+
+          <input {...register(ageField)} type="number" placeholder="Age" />
 
           <button type="submit">Submit</button>
         </div>

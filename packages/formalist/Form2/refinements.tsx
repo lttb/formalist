@@ -76,5 +76,9 @@ export const size = <F extends Field<any, any>>(
 ): FieldType<F['struct']['TYPE'] | undefined, F['struct']['schema']> =>
   Object.assign(
     refineField(field, (s) => sizeStruct(s, min, max)),
-    {__size__: {min, max}},
+    {
+      __size__: {min, max},
+      __min__: {threshold: min},
+      __max__: {threshold: max},
+    },
   )
