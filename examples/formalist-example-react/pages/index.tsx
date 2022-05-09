@@ -1,4 +1,4 @@
-import {createForm, Field, refineField, useField} from 'formalist'
+import {createForm, refineField} from 'formalist/index2'
 import type {NextPage} from 'next'
 import {optional} from 'superstruct'
 import {
@@ -12,48 +12,35 @@ import {
 const {Form} = createForm({
   fistName: firstNameField,
   lastName: lastNameField,
+
   middleName: refineField(middleNameField, optional),
-  email: emailField,
-  phone: phoneField,
+
+  contacts: {
+    email: emailField,
+    phone: phoneField,
+  },
+
+  // middleName: refineField(middleNameField, optional),
+  // email: emailField,
+  // phone: phoneField,
 })
-
-const TextInput = ({
-  field,
-  ...props
-}: {field: Field<string, null>} & JSX.IntrinsicElements['input']) => {
-  const state = useField(field)
-
-  if (state.meta.error) console.error(state.meta.error)
-
-  return (
-    <div>
-      <input
-        {...props}
-        value={state.value}
-        onChange={(e) => state.setValue(e.target.value)}
-      />
-      {state.meta.error && <div>{state.meta.error.message}</div>}
-    </div>
-  )
-}
 
 const Home: NextPage = () => {
   return (
     <div>
       <Form
         onSubmit={(data) => {
-          alert('success: ' + JSON.stringify(data))
+          console.log(data)
         }}
         onSubmitError={(error) => {
-          alert('error: ' + JSON.stringify(error))
+          console.error(error)
         }}
       >
-        <TextInput field={firstNameField} placeholder="First name" />
-        <TextInput field={middleNameField} placeholder="Middle name" />
-        <TextInput field={lastNameField} placeholder="Last name" />
+        <input name={firstNameField.id} placeholder="First name" />
+        <input name={lastNameField.id} placeholder="Last name" />
 
-        <TextInput field={emailField} placeholder="Email" />
-        <TextInput field={phoneField} placeholder="Phone" />
+        <input name={emailField.id} placeholder="Email" />
+        <input name={phoneField.id} placeholder="Phone" />
 
         <button type="submit">Submit</button>
       </Form>
