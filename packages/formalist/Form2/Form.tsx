@@ -5,7 +5,7 @@ import type {
   SubmitErrorHandler,
 } from 'react-hook-form/dist/types'
 import {nanoid} from 'nanoid'
-import {object, create, optional as optionalStruct} from 'superstruct'
+import {object, create, optional as optionalStruct, Context} from 'superstruct'
 
 import type {
   Struct,
@@ -34,10 +34,13 @@ const buildName = (name: any | any[]) =>
  *
  * refineField($myField, s.optional)
  */
-export const createField = <S extends Struct<any, any>>(
+export const createField = <
+  S extends Struct<any, any>,
+  C extends (value: Infer<S>, context: Context) => any,
+>(
   struct: S,
-  id?: string,
-): FieldStruct<S> => ({struct: struct, id: id || nanoid()})
+  coerce?: C,
+): FieldStruct<S> => ({struct: struct, id: nanoid(), coerce})
 
 const isField = (v: any): v is Field<any, any> => Boolean(v.struct && v.id)
 

@@ -69,6 +69,14 @@ export const lastNameField = createField(string())
 
 export const emailField = createField(Email)
 
-export const phoneField = createField(Phone)
+export const phoneField = createField(string(), async (value, ctx) => {
+  const result = phone(value)
+
+  if (!result.isValid) {
+    throw new CustomStructError('Invalid phone number', ctx, Phone, value)
+  }
+
+  return result
+})
 
 export const ageField = createField(coerce(number(), string(), Number))

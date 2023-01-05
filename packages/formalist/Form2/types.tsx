@@ -1,6 +1,6 @@
 import type {ReactNode, FC} from 'react'
 import type {O, S} from 'ts-toolbelt'
-import type {Struct, Infer} from 'superstruct'
+import type {Struct, Infer, Context} from 'superstruct'
 import type {ObjectSchema, ObjectType} from 'superstruct/lib/utils'
 
 import type {
@@ -27,7 +27,11 @@ export type FieldValueType<F extends FieldType<any, any>> = Infer<F['struct']>
 
 export type FieldType<T, S> = {struct: Struct<T, S>; id: string}
 
-export type FieldStruct<F extends Struct<any, any>> = {struct: F; id: string}
+export type FieldStruct<F extends Struct<any, any>> = {
+  struct: F
+  id: string
+  coerce?: (value: Infer<F>, context: Context) => any
+}
 
 export type Field<T, S> = {id: string; struct: Struct<T, S>}
 
