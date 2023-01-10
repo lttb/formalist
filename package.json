@@ -1,0 +1,17 @@
+{
+  "name": "root",
+  "private": true,
+  "workspaces": [
+    "@formalist/*",
+    "packages/*",
+    "examples/*"
+  ],
+  "version": "0.0.1",
+  "main": "index.js",
+  "repository": "git@github.com:lttb/formalist.git",
+  "author": "lttb <kenzhaev.artur@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^4.6.4"
+  }
+}
