@@ -1,4 +1,4 @@
-import {createField} from 'formalist/index2'
+import {createField} from 'formalist/index'
 import {
   string,
   define,
@@ -36,7 +36,7 @@ class CustomStructError extends StructError {
         type: struct.type,
         value,
       },
-      () => ({} as any),
+      () => ({}) as any,
     )
   }
 }

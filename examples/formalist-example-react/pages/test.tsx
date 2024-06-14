@@ -10,9 +10,11 @@ import {
 } from '../fields'
 
 const {Form} = createForm({
-  fistName: firstNameField,
-  lastName: lastNameField,
-  middleName: refineField(middleNameField, optional),
+  names: {
+    fistName: firstNameField,
+    lastName: lastNameField,
+    middleName: refineField(middleNameField, optional),
+  },
   email: emailField,
   phone: phoneField,
 })
@@ -26,13 +28,13 @@ const TextInput = ({
   if (state.meta.error) console.error(state.meta.error)
 
   return (
-    <div>
+    <div style={{border: state.meta.error ? '2px solid red' : '0'}}>
       <input
         {...props}
         value={state.value}
         onChange={(e) => state.setValue(e.target.value)}
       />
-      {state.meta.error && <div>{state.meta.error.message}</div>}
+      {state.meta.error && <span>{state.meta.error.message}</span>}
     </div>
   )
 }
@@ -40,18 +42,22 @@ const TextInput = ({
 const Home: NextPage = () => {
   return (
     <div>
-      <form
-        onSubmit={(event) => {
-          console.log(event)
+      <Form
+        onSubmit={(data, event) => {
+          console.log(data)
 
-          event.preventDefault()
+          event?.preventDefault()
+        }}
+        onSubmitError={(data, event) => {
+          console.log(data)
         }}
       >
-        <input name="firstName" />
-        <input name="lastName" />
+        <TextInput field={firstNameField} placeholder="first name" />
+        <TextInput field={lastNameField} placeholder="last name" />
+        <TextInput field={middleNameField} placeholder="middle name" />
 
         <button type="submit">Submit</button>
-      </form>
+      </Form>
     </div>
   )
 }
